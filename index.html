@@ -1,0 +1,256 @@
+<!--
+ * Copyright (C) 2025 Ferhat Gönültaş (github.com/ferhatgnlts)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Mockup Creator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1 class="app-title">App Mockup Creator</h1>
+    
+    <div class="create-new">
+        <button class="btn btn-success" id="create-new-btn">
+            <span>+</span> Create New Phone Mockup
+        </button>
+        <button class="btn btn-primary" id="export-all-btn">
+            <span>📦</span> Download All Mockups (ZIP)
+        </button>
+    </div>
+
+    <div class="mockups-container" id="mockups-container">
+        <!-- Mockups will be added here -->
+    </div>
+
+    <div class="instructions">
+        Click on a mockup to customize it. All mockups can be downloaded as high-resolution PNG files.
+    </div>
+
+    <div class="modal" id="customization-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Phone Mockup Customization</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="header-text">Header Text</label>
+                <textarea id="header-text" placeholder="Enter mockup header text here...">Phone Mockup</textarea>
+            </div>
+            <div class="form-group">
+                <label for="text-size">Text Size (px)</label>
+                <input type="number" id="text-size" value="20" min="10" max="50" class="size-control">
+            </div>
+            <div class="form-group">
+                <label>Text Alignment</label>
+                <div class="text-alignment-controls">
+                    <div class="radio-option">
+                        <input type="radio" id="align-left" name="text-align" value="left">
+                        <label for="align-left">Left</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="align-center" name="text-align" value="center" checked>
+                        <label for="align-center">Center</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="align-right" name="text-align" value="right">
+                        <label for="align-right">Right</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Text Margin</label>
+                <div class="margin-controls">
+                    <div class="margin-control">
+                        <label for="text-margin-top">Top (px)</label>
+                        <input type="number" id="text-margin-top" value="0" min="0" max="100">
+                    </div>
+                    <div class="margin-control">
+                        <label for="text-margin-bottom">Bottom (px)</label>
+                        <input type="number" id="text-margin-bottom" value="0" min="0" max="100">
+                    </div>
+                    <div class="margin-control">
+                        <label for="text-margin-left">Left (px)</label>
+                        <input type="number" id="text-margin-left" value="0" min="0" max="100">
+                    </div>
+                    <div class="margin-control">
+                        <label for="text-margin-right">Right (px)</label>
+                        <input type="number" id="text-margin-right" value="0" min="0" max="100">
+                    </div>
+                </div>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="header-bg-toggle" checked>
+                <label for="header-bg-toggle">Show header background</label>
+            </div>
+            <div class="form-group">
+                <label for="page-bg-color">Page Background</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="use-gradient" name="bg-type">
+                    <label for="use-gradient">Use gradient background</label>
+                </div>
+                <div id="solid-color-controls">
+                    <div class="color-input-group">
+                        <input type="color" id="page-bg-color" value="#e9ecef">
+                        <input type="text" id="page-bg-color-text" value="#e9ecef" placeholder="HEX code">
+                    </div>
+                </div>
+                <div id="gradient-controls" style="display: none;">
+                    <div class="color-input-group">
+                        <input type="color" id="gradient-color-1" value="#4a6fa5">
+                        <input type="text" id="gradient-color-1-text" value="#4a6fa5" placeholder="First color">
+                    </div>
+                    <div class="color-input-group" style="margin-top: 10px;">
+                        <input type="color" id="gradient-color-2" value="#e9ecef">
+                        <input type="text" id="gradient-color-2-text" value="#e9ecef" placeholder="Second color">
+                    </div>
+                    <div class="gradient-preview" id="gradient-preview"></div>
+                    <div class="form-group">
+                        <label>Gradient Direction</label>
+                        <div class="gradient-direction-controls">
+                            <div class="radio-option">
+                                <input type="radio" id="gradient-to-right" name="gradient-direction" value="to right" checked>
+                                <label for="gradient-to-right">Left to Right</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="gradient-to-bottom" name="gradient-direction" value="to bottom">
+                                <label for="gradient-to-bottom">Top to Bottom</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="gradient-to-bottom-right" name="gradient-direction" value="to bottom right">
+                                <label for="gradient-to-bottom-right">Diagonal</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="gradient-radial" name="gradient-direction" value="radial">
+                                <label for="gradient-radial">Radial</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="header-color">Header Color</label>
+                <div class="color-input-group">
+                    <input type="color" id="header-color" value="#4a6fa5">
+                    <input type="text" id="header-color-text" value="#4a6fa5" placeholder="HEX code">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="phone-color">Phone Color</label>
+                <div class="color-input-group">
+                    <input type="color" id="phone-color" value="#333333">
+                    <input type="text" id="phone-color-text" value="#333333" placeholder="HEX code">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="text-color">Text Color</label>
+                <div class="color-input-group">
+                    <input type="color" id="text-color" value="#ffffff">
+                    <input type="text" id="text-color-text" value="#ffffff" placeholder="HEX code">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Phone Size</label>
+                <div class="size-controls">
+                    <div class="size-control">
+                        <label for="phone-width">Width (px)</label>
+                        <input type="number" id="phone-width" value="280" min="100" max="500">
+                    </div>
+                    <div class="size-control">
+                        <label for="phone-height">Height (px)</label>
+                        <input type="number" id="phone-height" value="560" min="200" max="1000">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Phone Margin</label>
+                <div class="margin-controls">
+                    <div class="margin-control">
+                        <label for="phone-margin-top">Top (px)</label>
+                        <input type="number" id="phone-margin-top" value="0" min="-100" max="100">
+                    </div>
+                    <div class="margin-control">
+                        <label for="phone-margin-bottom">Bottom (px)</label>
+                        <input type="number" id="phone-margin-bottom" value="0" min="-100" max="100">
+                    </div>
+                    <div class="margin-control">
+                        <label for="phone-margin-left">Left (px)</label>
+                        <input type="number" id="phone-margin-left" value="0" min="-100" max="100">
+                    </div>
+                    <div class="margin-control">
+                        <label for="phone-margin-right">Right (px)</label>
+                        <input type="number" id="phone-margin-right" value="0" min="-100" max="100">
+                    </div>
+                </div>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="notch-toggle" checked>
+                <label for="notch-toggle">Show notch</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="speaker-toggle" checked>
+                <label for="speaker-toggle">Show speaker</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="rounded-corners" checked>
+                <label for="rounded-corners">Rounded corners</label>
+            </div>
+            <div class="form-group">
+                <label for="screen-image">Screen Image</label>
+                <input type="file" id="screen-image" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>Screen Image Alignment</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="fit-cover" name="image-fit" value="cover" checked>
+                        <label for="fit-cover">Cover</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="fit-contain" name="image-fit" value="contain">
+                        <label for="fit-contain">Contain</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="fit-fill" name="image-fit" value="fill">
+                        <label for="fit-fill">Fill</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-danger" id="delete-btn">
+                    <span>🗑️</span> Delete
+                </button>
+                <button class="btn btn-secondary" id="reset-btn">
+                    <span>🔄</span> Reset
+                </button>
+                <button class="btn btn-primary" id="apply-btn">
+                    <span>✅</span> Apply
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div>Generating images, please wait...</div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
