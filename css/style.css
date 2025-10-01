@@ -85,6 +85,7 @@ body {
     font-weight: 600;
     transition: all 0.3s ease;
     width: 100%;
+    white-space: pre-line; /* Alt satırları desteklemek için */
 }
 
 .phone-container {
@@ -294,6 +295,7 @@ body {
     min-height: 100px;
     font-size: 15px;
     transition: border-color 0.3s;
+    white-space: pre-line; /* Alt satırları desteklemek için */
 }
 
 .form-group textarea:focus {
