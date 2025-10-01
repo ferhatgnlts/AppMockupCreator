@@ -64,6 +64,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentMockup = null;
     let mockupCount = 0;
     
+    // Store default settings from first mockup
+    let defaultSettings = null;
+    
     // Create first mockup
     createNewMockup();
     
@@ -170,6 +173,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentMockup) {
             applyChanges();
             modal.style.display = 'none';
+            
+            // Update default settings with current values
+            if (defaultSettings === null) {
+                defaultSettings = getCurrentSettings();
+            } else {
+                // Update default settings with current form values
+                defaultSettings = getCurrentSettings();
+            }
         }
     });
     
@@ -249,6 +260,198 @@ document.addEventListener('DOMContentLoaded', function() {
         gradientPreview.style.background = gradientValue;
     }
     
+    // Get current settings from form
+    function getCurrentSettings() {
+        return {
+            headerText: headerText.value,
+            textSize: textSize.value,
+            textAlign: getSelectedValue(textAlignRadios),
+            textMargin: {
+                top: textMarginTop.value,
+                bottom: textMarginBottom.value,
+                left: textMarginLeft.value,
+                right: textMarginRight.value
+            },
+            headerBgToggle: headerBgToggle.checked,
+            useGradient: useGradient.checked,
+            pageBgColor: pageBgColor.value,
+            gradientColor1: gradientColor1.value,
+            gradientColor2: gradientColor2.value,
+            gradientDirection: getSelectedValue(gradientDirectionRadios),
+            headerColor: headerColor.value,
+            phoneColor: phoneColor.value,
+            textColor: textColor.value,
+            phoneWidth: phoneWidth.value,
+            phoneHeight: phoneHeight.value,
+            phoneMargin: {
+                top: phoneMarginTop.value,
+                bottom: phoneMarginBottom.value,
+                left: phoneMarginLeft.value,
+                right: phoneMarginRight.value
+            },
+            notchToggle: notchToggle.checked,
+            speakerToggle: speakerToggle.checked,
+            roundedCorners: roundedCorners.checked,
+            imageFit: getSelectedValue(imageFitRadios)
+        };
+    }
+    
+    // Get selected value from radio buttons
+    function getSelectedValue(radios) {
+        for (const radio of radios) {
+            if (radio.checked) {
+                return radio.value;
+            }
+        }
+        return null;
+    }
+    
+    // Apply settings to form
+    function applySettingsToForm(settings) {
+        headerText.value = settings.headerText;
+        textSize.value = settings.textSize;
+        setRadioValue(textAlignRadios, settings.textAlign);
+        textMarginTop.value = settings.textMargin.top;
+        textMarginBottom.value = settings.textMargin.bottom;
+        textMarginLeft.value = settings.textMargin.left;
+        textMarginRight.value = settings.textMargin.right;
+        headerBgToggle.checked = settings.headerBgToggle;
+        useGradient.checked = settings.useGradient;
+        pageBgColor.value = settings.pageBgColor;
+        pageBgColorText.value = settings.pageBgColor;
+        gradientColor1.value = settings.gradientColor1;
+        gradientColor1Text.value = settings.gradientColor1;
+        gradientColor2.value = settings.gradientColor2;
+        gradientColor2Text.value = settings.gradientColor2;
+        setRadioValue(gradientDirectionRadios, settings.gradientDirection);
+        headerColor.value = settings.headerColor;
+        headerColorText.value = settings.headerColor;
+        phoneColor.value = settings.phoneColor;
+        phoneColorText.value = settings.phoneColor;
+        textColor.value = settings.textColor;
+        textColorText.value = settings.textColor;
+        phoneWidth.value = settings.phoneWidth;
+        phoneHeight.value = settings.phoneHeight;
+        phoneMarginTop.value = settings.phoneMargin.top;
+        phoneMarginBottom.value = settings.phoneMargin.bottom;
+        phoneMarginLeft.value = settings.phoneMargin.left;
+        phoneMarginRight.value = settings.phoneMargin.right;
+        notchToggle.checked = settings.notchToggle;
+        speakerToggle.checked = settings.speakerToggle;
+        roundedCorners.checked = settings.roundedCorners;
+        setRadioValue(imageFitRadios, settings.imageFit);
+        
+        // Update gradient controls visibility
+        if (settings.useGradient) {
+            solidColorControls.style.display = 'none';
+            gradientControls.style.display = 'block';
+        } else {
+            solidColorControls.style.display = 'block';
+            gradientControls.style.display = 'none';
+        }
+        
+        updateGradientPreview();
+    }
+    
+    // Set radio button value
+    function setRadioValue(radios, value) {
+        for (const radio of radios) {
+            if (radio.value === value) {
+                radio.checked = true;
+                break;
+            }
+        }
+    }
+    
+    // Apply settings directly to a mockup
+    function applySettingsToMockup(mockup, settings) {
+        const header = mockup.querySelector('.header');
+        const phoneContainer = mockup.querySelector('.phone-container');
+        const phone = mockup.querySelector('.phone');
+        const phoneScreen = mockup.querySelector('.phone-screen');
+        const phoneNotch = mockup.querySelector('.phone-notch');
+        const phoneSpeaker = mockup.querySelector('.phone-speaker');
+        const headerTextElement = mockup.querySelector('.header-text');
+        
+        // Apply values
+        headerTextElement.textContent = settings.headerText || 'Phone Mockup';
+        headerTextElement.style.fontSize = (settings.textSize || 20) + 'px';
+        headerTextElement.style.textAlign = settings.textAlign || 'center';
+        
+        // Text margin
+        const textTop = settings.textMargin.top || 0;
+        const textRight = settings.textMargin.right || 0;
+        const textBottom = settings.textMargin.bottom || 0;
+        const textLeft = settings.textMargin.left || 0;
+        headerTextElement.style.margin = `${textTop}px ${textRight}px ${textBottom}px ${textLeft}px`;
+        
+        // Page background
+        if (settings.useGradient) {
+            let gradientValue;
+            if (settings.gradientDirection === 'radial') {
+                gradientValue = `radial-gradient(circle, ${settings.gradientColor1}, ${settings.gradientColor2})`;
+            } else {
+                gradientValue = `linear-gradient(${settings.gradientDirection}, ${settings.gradientColor1}, ${settings.gradientColor2})`;
+            }
+            
+            phoneContainer.style.background = gradientValue;
+            phoneContainer.style.backgroundColor = '';
+        } else {
+            phoneContainer.style.backgroundColor = settings.pageBgColor;
+            phoneContainer.style.background = '';
+        }
+        
+        // Header background control
+        if (settings.headerBgToggle) {
+            header.style.backgroundColor = settings.headerColor;
+            header.classList.remove('no-bg');
+        } else {
+            // Make header background same as page background
+            if (settings.useGradient) {
+                header.style.background = phoneContainer.style.background;
+                header.style.backgroundColor = '';
+            } else {
+                header.style.backgroundColor = phoneContainer.style.backgroundColor;
+                header.style.background = '';
+            }
+            header.classList.add('no-bg');
+        }
+        
+        phone.style.backgroundColor = settings.phoneColor;
+        header.style.color = settings.textColor;
+        
+        // Phone margin
+        phone.style.marginTop = (settings.phoneMargin.top || 0) + 'px';
+        phone.style.marginBottom = (settings.phoneMargin.bottom || 0) + 'px';
+        phone.style.marginLeft = (settings.phoneMargin.left || 0) + 'px';
+        phone.style.marginRight = (settings.phoneMargin.right || 0) + 'px';
+        
+        // Update phone sizes
+        updatePhoneSize(
+            phone, 
+            phoneScreen, 
+            phoneNotch, 
+            phoneSpeaker,
+            parseInt(settings.phoneWidth) || 280,
+            parseInt(settings.phoneHeight) || 560,
+            settings.roundedCorners
+        );
+        
+        // Notch control
+        if (settings.notchToggle) {
+            phoneNotch.classList.remove('hidden');
+        } else {
+            phoneNotch.classList.add('hidden');
+        }
+        
+        // Speaker control
+        if (settings.speakerToggle) {
+            phoneSpeaker.classList.remove('hidden');
+        } else {
+            phoneSpeaker.classList.add('hidden');
+        }
+    }
+    
     // Create new mockup function
     function createNewMockup() {
         mockupCount++;
@@ -294,19 +497,32 @@ document.addEventListener('DOMContentLoaded', function() {
         mockupWrapper.appendChild(mockupActions);
         mockupsContainer.appendChild(mockupWrapper);
         
-        // Set default sizes
-        const phone = mockupWrapper.querySelector('.phone');
-        const phoneScreen = mockupWrapper.querySelector('.phone-screen');
-        const phoneNotch = mockupWrapper.querySelector('.phone-notch');
-        const phoneSpeaker = mockupWrapper.querySelector('.phone-speaker');
-        const headerTextElement = mockupWrapper.querySelector('.header-text');
-        
-        // Set default text alignment, margin and size
-        headerTextElement.style.textAlign = 'center';
-        headerTextElement.style.margin = '0';
-        headerTextElement.style.fontSize = '20px';
-        
-        updatePhoneSize(phone, phoneScreen, phoneNotch, phoneSpeaker, 280, 560, true);
+        // If we have default settings, apply them to this new mockup
+        if (defaultSettings !== null) {
+            // Update header text with new number but keep other settings
+            const newSettings = {...defaultSettings};
+            newSettings.headerText = `Phone Mockup ${mockupCount}`;
+            
+            // Apply settings directly to the mockup
+            applySettingsToMockup(container, newSettings);
+        } else {
+            // This is the first mockup, set default settings
+            const headerTextElement = mockupWrapper.querySelector('.header-text');
+            const phone = mockupWrapper.querySelector('.phone');
+            const phoneScreen = mockupWrapper.querySelector('.phone-screen');
+            const phoneNotch = mockupWrapper.querySelector('.phone-notch');
+            const phoneSpeaker = mockupWrapper.querySelector('.phone-speaker');
+            
+            // Set default text alignment, margin and size
+            headerTextElement.style.textAlign = 'center';
+            headerTextElement.style.margin = '0';
+            headerTextElement.style.fontSize = '20px';
+            
+            updatePhoneSize(phone, phoneScreen, phoneNotch, phoneSpeaker, 280, 560, true);
+            
+            // Store these as default settings
+            defaultSettings = getCurrentSettings();
+        }
         
         // Add click event to customize button
         const customizeBtn = mockupWrapper.querySelector('.customize-btn');
@@ -449,15 +665,15 @@ document.addEventListener('DOMContentLoaded', function() {
             solidColorControls.style.display = 'block';
             gradientControls.style.display = 'none';
             
-            // Page background
-            const pageBg = phoneContainer.style.backgroundColor;
+            // Page background - FIX: Get the actual background color
+            const pageBg = phoneContainer.style.backgroundColor || window.getComputedStyle(phoneContainer).backgroundColor;
             const hexColor = rgbToHex(pageBg || '#e9ecef');
             pageBgColor.value = hexColor;
             pageBgColorText.value = hexColor;
         }
         
         // Header background
-        const headerBg = header.style.backgroundColor;
+        const headerBg = header.style.backgroundColor || window.getComputedStyle(header).backgroundColor;
         const headerHexColor = rgbToHex(headerBg || '#4a6fa5');
         headerColor.value = headerHexColor;
         headerColorText.value = headerHexColor;
@@ -667,6 +883,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (rgb.startsWith('#')) return rgb;
         if (rgb === 'transparent') return '#ffffff';
         
+        // Handle rgb() and rgba() formats
         const rgbValues = rgb.match(/\d+/g);
         if (!rgbValues || rgbValues.length < 3) return '#000000';
         
