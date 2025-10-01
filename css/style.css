@@ -1,0 +1,598 @@
+/*
+ * Copyright (C) 2025 Ferhat Gönültaş (github.com/ferhatgnlts)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: #f5f7fa;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.app-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4a6fa5;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.mockups-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1400px;
+}
+
+.mockup-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container {
+    width: 400px;
+    height: 711px;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: relative;
+}
+
+.header {
+    padding: 20px;
+    background: #4a6fa5;
+    color: white;
+    transition: all 0.3s ease;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.header.no-bg {
+    background: transparent !important;
+}
+
+.header-text {
+    font-size: 20px;
+    line-height: 1.5;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.phone-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9ecef;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.phone {
+    background: #333;
+    position: absolute;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-radius: 35px;
+}
+
+.phone-screen {
+    background: #f0f0f0;
+    position: absolute;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22px;
+}
+
+.phone-screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.phone-notch {
+    width: 140px;
+    height: 25px;
+    background: #333;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 12px 12px;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.phone-notch.hidden {
+    display: none;
+}
+
+.phone-speaker {
+    width: 80px;
+    height: 8px;
+    background: #222;
+    position: absolute;
+    top: 7px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 4px;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.phone-speaker.hidden {
+    display: none;
+}
+
+.phone-buttons {
+    position: absolute;
+    right: -6px;
+    top: 110px;
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+}
+
+.phone-button {
+    width: 6px;
+    height: 50px;
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.mockup-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 12px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.modal-header h2 {
+    color: #4a6fa5;
+    font-size: 24px;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #777;
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    color: #444;
+}
+
+.color-input-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.color-input-group input[type="color"] {
+    width: 70px;
+    height: 45px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.color-input-group input[type="text"] {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+.color-input-group input[type="text"]:focus {
+    border-color: #4a6fa5;
+    outline: none;
+}
+
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+.form-group input[type="file"]:hover {
+    border-color: #4a6fa5;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    resize: vertical;
+    min-height: 100px;
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+.form-group textarea:focus {
+    border-color: #4a6fa5;
+    outline: none;
+}
+
+.size-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.size-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.size-control label {
+    font-weight: 500;
+    font-size: 14px;
+    margin: 0;
+}
+
+.size-control input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.margin-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.margin-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.margin-control label {
+    font-weight: 500;
+    font-size: 14px;
+    margin: 0;
+}
+
+.margin-control input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    font-weight: 500;
+    cursor: pointer;
+    margin: 0;
+}
+
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.radio-option input {
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.radio-option label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 35px;
+    gap: 15px;
+}
+
+.btn {
+    padding: 14px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: #4a6fa5;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #3a5a85;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(58, 90, 133, 0.3);
+}
+
+.btn-secondary {
+    background: #e9ecef;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #dde1e6;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+.create-new {
+    margin: 30px 0;
+    text-align: center;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.create-new .btn {
+    padding: 16px 32px;
+    font-size: 18px;
+}
+
+.instructions {
+    margin-top: 15px;
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+    max-width: 800px;
+    line-height: 1.6;
+}
+
+/* Screen image alignment styles */
+.phone-screen img.object-fit-cover {
+    object-fit: cover;
+}
+
+.phone-screen img.object-fit-contain {
+    object-fit: contain;
+    background-color: white;
+}
+
+.phone-screen img.object-fit-fill {
+    object-fit: fill;
+}
+
+.download-individual {
+    margin-top: 8px;
+}
+
+.download-individual .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.default-screen-text {
+    color: #888;
+    font-size: 18px;
+    font-style: italic;
+}
+
+.loading {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: white;
+    font-size: 20px;
+}
+
+.loading-spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #4a6fa5;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.text-alignment-controls {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.text-alignment-controls .radio-option {
+    flex: 1;
+}
+
+.gradient-preview {
+    width: 100%;
+    height: 50px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 2px solid #ddd;
+    background: linear-gradient(to right, #4a6fa5, #e9ecef);
+}
+
+.gradient-controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.gradient-controls input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+.gradient-controls input:focus {
+    border-color: #4a6fa5;
+    outline: none;
+}
+
+.gradient-direction-controls {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.gradient-direction-controls .radio-option {
+    flex: 1;
+    min-width: 120px;
+}
